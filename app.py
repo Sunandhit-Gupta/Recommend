@@ -128,20 +128,27 @@ import requests
 app = Flask(__name__)
 
 # Example function to get movie recommendations (to be replaced with your model)
-def get_movie_recommendations(movie_id):
+def get_movie_recommendations(movie_id,quantity):
     # Dummy data for illustration
-    recommendations = recommend(movie_id)
+    recommendations = recommend(movie_id,quantity)
     return recommendations
 
 @app.route('/recommend', methods=['POST'])
 def recommended():
     data = request.json
     tmdb_id = data.get('tmdb_id')
+    quantity = data.get('quantity')
+
+    if not quantity:
+        quantity = 5
+        
+    if quantity > 200:
+        return jsonify({"error": "Maximum quantity should be less than 200"}), 400
 
     if not tmdb_id :
         return jsonify({"error": "tmdb_id is required"}), 400
     else:
-        recommendations = get_movie_recommendations(tmdb_id)
+        recommendations = get_movie_recommendations(tmdb_id , quantity)
 
     return jsonify({"recommendations": recommendations})
 
