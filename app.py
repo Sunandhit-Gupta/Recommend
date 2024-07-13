@@ -141,14 +141,17 @@ def recommended():
 
     if not quantity:
         quantity = 5
-        
+
     if quantity > 200:
         return jsonify({"error": "Maximum quantity should be less than 200"}), 400
 
     if not tmdb_id :
         return jsonify({"error": "tmdb_id is required"}), 400
     else:
-        recommendations = get_movie_recommendations(tmdb_id , quantity)
+        try:
+            recommendations = get_movie_recommendations(tmdb_id, quantity)
+        except Exception as e:
+            return jsonify({"error": "An error occurred while fetching recommendations", "details": str(e)}), 500
 
     return jsonify({"recommendations": recommendations})
 
